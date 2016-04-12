@@ -12,6 +12,8 @@ module.exports = function (options) {
     options = options || {};
     var configure = options.configure || function () {};
     delete options.configure;
+    var inlineSourceMap = !!options.inlineSourceMap;
+    delete options.inlineSourceMap;
 
     var bundles = [];
 
@@ -55,16 +57,20 @@ module.exports = function (options) {
                 outputNode.name = outputPrefix + path.basename(entrypointNode.name, path.extname(entrypointNode.name)) + '.js';
                 outputNode.metadata.mime = 'application/javascript';
 
-                var data = buf.toString('utf-8');
-                var outputBundle = convertSourceMap.removeComments(data);
-                outputNode.data = new Buffer(outputBundle, 'utf-8');
-
                 // Source map
-                var sourceMap = convertSourceMap.fromSource(data).toObject();
-                sourceMap.sources = sourceMap.sources.map(function (source) {
-                    return (source[0] === '/') ? path.relative(entrypointNode.base, source) : source;
-                });
-                outputNode = bygglib.tree.sourceMap.set(outputNode, sourceMap, { sourceBase: outputPrefix });
+                if (inlineSourceMap) {
+                    outputNode.data = buf;
+                } else {
+                    var data = buf.toString('utf-8');
+                    var outputBundle = convertSourceMap.removeComments(data);
+                    outputNode.data = new Buffer(outputBundle, 'utf-8');
+
+                    var sourceMap = convertSourceMap.fromSource(data).toObject();
+                    sourceMap.sources = sourceMap.sources.map(function (source) {
+                        return (source[0] === '/') ? path.relative(entrypointNode.base, source) : source;
+                    });
+                    outputNode = bygglib.tree.sourceMap.set(outputNode, sourceMap, { sourceBase: outputPrefix });
+                }
 
                 bygglib.logger.log('browserify', 'Bundled ' + outputNode.name, new Date() - start);
 
