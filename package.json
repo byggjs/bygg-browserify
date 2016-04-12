@@ -1,0 +1,25 @@
+{
+  "name": "bygg-browserify",
+  "description": "Browserify plugin for the Bygg build system",
+  "version": "1.2.0",
+  "author": {
+    "name": "Ole André Vadla Ravnås",
+    "email": "oleavr@gmail.com",
+    "url": "http://www.frida.re/"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/byggjs/bygg-browserify.git"
+  },
+  "dependencies": {
+    "browserify": "^13.0.0",
+    "bygg": "^1.2.0",
+    "convert-source-map": "^1.0.0",
+    "extend": "^3.0.0",
+    "through2": "^2.0.0"
+  },
+  "engines": {
+    "node": ">= 0.10"
+  }
+}
